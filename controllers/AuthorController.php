@@ -3,19 +3,17 @@
 namespace app\controllers;
 
 use Yii;
-use app\models\Books;
 use app\models\Authors;
-use app\models\SearchBook;
+use app\models\SearchAuthor;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 
 /**
- * BookController implements the CRUD actions for Books model.
+ * AuthorController implements the CRUD actions for Authors model.
  */
-class BookController extends Controller
+class AuthorController extends Controller
 {
-    public $allauthor = array();
     /**
      * {@inheritdoc}
      */
@@ -32,12 +30,12 @@ class BookController extends Controller
     }
 
     /**
-     * Lists all Books models.
+     * Lists all Authors models.
      * @return mixed
      */
     public function actionIndex()
     {
-        $searchModel = new SearchBook();
+        $searchModel = new SearchAuthor();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         return $this->render('index', [
@@ -47,7 +45,7 @@ class BookController extends Controller
     }
 
     /**
-     * Displays a single Books model.
+     * Displays a single Authors model.
      * @param integer $id
      * @return mixed
      * @throws NotFoundHttpException if the model cannot be found
@@ -60,16 +58,13 @@ class BookController extends Controller
     }
 
     /**
-     * Creates a new Books model.
+     * Creates a new Authors model.
      * If creation is successful, the browser will be redirected to the 'view' page.
      * @return mixed
      */
     public function actionCreate()
     {
-        $model = new Books();
-
-        //Массив все авторов для dropdownList
-        $this->allauthor = self::getAllAuthorsForDropdownList();
+        $model = new Authors();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -77,12 +72,11 @@ class BookController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'allauthor' => $this->allauthor,
         ]);
     }
 
     /**
-     * Updates an existing Books model.
+     * Updates an existing Authors model.
      * If update is successful, the browser will be redirected to the 'view' page.
      * @param integer $id
      * @return mixed
@@ -90,15 +84,7 @@ class BookController extends Controller
      */
     public function actionUpdate($id)
     {
-
         $model = $this->findModel($id);
-        //Текущий список авторов книги
-        foreach ($model->authors as $auth) {
-            $model->idAuthors[] = $auth->id;
-        }
-
-        //Массив все авторов для dropdownList
-        $this->allauthor = self::getAllAuthorsForDropdownList();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -106,12 +92,11 @@ class BookController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'allauthor' => $this->allauthor,
         ]);
     }
 
     /**
-     * Deletes an existing Books model.
+     * Deletes an existing Authors model.
      * If deletion is successful, the browser will be redirected to the 'index' page.
      * @param integer $id
      * @return mixed
@@ -125,26 +110,18 @@ class BookController extends Controller
     }
 
     /**
-     * Finds the Books model based on its primary key value.
+     * Finds the Authors model based on its primary key value.
      * If the model is not found, a 404 HTTP exception will be thrown.
      * @param integer $id
-     * @return Books the loaded model
+     * @return Authors the loaded model
      * @throws NotFoundHttpException if the model cannot be found
      */
     protected function findModel($id)
     {
-        if (($model = Books::findOne($id)) !== null) {
+        if (($model = Authors::findOne($id)) !== null) {
             return $model;
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
-    }
-
-    static function getAllAuthorsForDropdownList() {
-        $aallauthor = array();
-        foreach (Authors::find()->select(['surname', 'id'])->all() as $itemAuthor) {
-            $aallauthor[$itemAuthor->id] = $itemAuthor->surname;
-        }
-        return $aallauthor;
     }
 }

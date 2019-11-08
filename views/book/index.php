@@ -7,7 +7,7 @@ use yii\grid\GridView;
 /* @var $searchModel app\models\SearchBook */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Books';
+$this->title = 'Книги';
 $this->params['breadcrumbs'][] = $this->title;
 
 ?>
@@ -31,7 +31,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'label' => 'Автор',
                 'value' => function($model) {
-                    return join(', ', yii\helpers\ArrayHelper::map($model->authors, 'id', 'family'));
+                    return join(', ', yii\helpers\ArrayHelper::map($model->authors, 'id', 'surname'));
                 },
             ],
             [

@@ -15,8 +15,8 @@ class m191107_080037_create_authors_table extends Migration
         $this->createTable('{{%authors}}', [
             'id' => $this->primaryKey(),
             'name' => $this->string(20)->notNull(),
-            'family' => $this->string(),
-            'dob' => $this->datetime(),
+            'surname' => $this->string(),
+            'dob' => $this->date(),
         ]);
     }
 

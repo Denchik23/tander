@@ -4,14 +4,14 @@ use yii\helpers\Html;
 use yii\widgets\DetailView;
 
 /* @var $this yii\web\View */
-/* @var $model app\models\Books */
+/* @var $model app\models\Authors */
 
-$this->title = $model->title;
-$this->params['breadcrumbs'][] = ['label' => 'Books', 'url' => ['index']];
+$this->title = $model->name;
+$this->params['breadcrumbs'][] = ['label' => 'Authors', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
-<div class="books-view">
+<div class="authors-view">
 
     <h1><?= Html::encode($this->title) ?></h1>
 
@@ -30,19 +30,13 @@ $this->params['breadcrumbs'][] = $this->title;
         'model' => $model,
         'attributes' => [
             'id',
-            'title',
-            [
-                'label' => 'Автор',
-                'value' => function($model) {
-                    return join(', ', yii\helpers\ArrayHelper::map($model->authors, 'id', 'surname'));
-                },
-            ],
-            'content:ntext',
+            'name',
+            'surname',
+            'dob:date',
         ],
     ]) ?>
 
 </div>
 <div class="text-center">
-    <?= Html::a('Назад к списку', ['book/index'], ['class' => 'btn btn-primary']) ?>
+    <?= Html::a('Назад к списку', ['author/index'], ['class' => 'btn btn-primary']) ?>
 </div>
-

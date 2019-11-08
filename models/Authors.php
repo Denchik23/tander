@@ -9,7 +9,7 @@ use Yii;
  *
  * @property int $id
  * @property string $name
- * @property string $family
+ * @property string $surname
  * @property string $dob
  *
  * @property BookAuthor[] $bookAuthors
@@ -17,6 +17,7 @@ use Yii;
  */
 class Authors extends \yii\db\ActiveRecord
 {
+    public $countBooks;
     /**
      * {@inheritdoc}
      */
@@ -33,8 +34,9 @@ class Authors extends \yii\db\ActiveRecord
         return [
             [['name'], 'required'],
             [['dob'], 'safe'],
+            [['dob'], 'date', 'format' => 'yyyy-MM-dd'],
             [['name'], 'string', 'max' => 20],
-            [['family'], 'string', 'max' => 255],
+            [['surname'], 'string', 'max' => 255],
         ];
     }
 
@@ -45,9 +47,9 @@ class Authors extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'name' => 'Name',
-            'family' => 'Family',
-            'dob' => 'Dob',
+            'name' => 'Имя',
+            'surname' => 'Фамилия',
+            'dob' => 'Дата рождения',
         ];
     }
 
@@ -65,5 +67,11 @@ class Authors extends \yii\db\ActiveRecord
     public function getBooks()
     {
         return $this->hasMany(Books::className(), ['id' => 'book_id'])->viaTable('book_author', ['author_id' => 'id']);
+    }
+
+
+    public function setCountBooks() {
+        $this->countBooks = count($this->books);
+        return $this->countBooks;
     }
 }

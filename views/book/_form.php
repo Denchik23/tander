@@ -5,6 +5,7 @@ use yii\widgets\ActiveForm;
 
 /* @var $this yii\web\View */
 /* @var $model app\models\Books */
+/* @var $allauthor app\models\Authors */
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
@@ -13,6 +14,11 @@ use yii\widgets\ActiveForm;
     <?php $form = ActiveForm::begin(); ?>
 
     <?= $form->field($model, 'title')->textInput(['maxlength' => true]) ?>
+
+    <?= $form->field($model, 'idAuthors')
+        ->dropdownList($allauthor, [
+            'multiple' => true,
+        ])?>
 
     <?= $form->field($model, 'content')->textarea(['rows' => 6]) ?>
 

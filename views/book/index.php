@@ -9,6 +9,7 @@ use yii\grid\GridView;
 
 $this->title = 'Books';
 $this->params['breadcrumbs'][] = $this->title;
+
 ?>
 <div class="books-index">
 
@@ -22,15 +23,25 @@ $this->params['breadcrumbs'][] = $this->title;
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
+        //'filterModel' => $searchModel,
         'columns' => [
             ['class' => 'yii\grid\SerialColumn'],
 
-            'id',
             'title',
-            'content:ntext',
+            [
+                'label' => 'Автор',
+                'value' => function($model) {
+                    return join(', ', yii\helpers\ArrayHelper::map($model->authors, 'id', 'family'));
+                },
+            ],
+            [
+                'attribute'=>'content',
+                'label'=>'Описание',
+                'options' => ['style' => 'width: 45%; max-width: 45%;'],
+                'contentOptions'=>['style'=>'white-space: normal;']
+            ],
 
-            ['class' => 'yii\grid\ActionColumn'],
+            ['class' => 'yii\grid\ActionColumn', 'header' => 'Действия' ],
         ],
     ]); ?>
 

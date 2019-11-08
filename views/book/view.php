@@ -31,8 +31,18 @@ $this->params['breadcrumbs'][] = $this->title;
         'attributes' => [
             'id',
             'title',
+            [
+                'label' => 'Автор',
+                'value' => function($model) {
+                    return join(', ', yii\helpers\ArrayHelper::map($model->authors, 'id', 'family'));
+                },
+            ],
             'content:ntext',
         ],
     ]) ?>
 
 </div>
+<div class="text-center">
+    <?= Html::a('Назад к списку', ['book/index'], ['class' => 'btn btn-primary']) ?>
+</div>
+

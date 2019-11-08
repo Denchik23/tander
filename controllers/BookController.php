@@ -4,6 +4,7 @@ namespace app\controllers;
 
 use Yii;
 use app\models\Books;
+use app\models\Authors;
 use app\models\SearchBook;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -14,6 +15,7 @@ use yii\filters\VerbFilter;
  */
 class BookController extends Controller
 {
+    public $allauthor = array();
     /**
      * {@inheritdoc}
      */
@@ -66,12 +68,16 @@ class BookController extends Controller
     {
         $model = new Books();
 
+        //Массив все авторов для dropdownList
+        $this->allauthor = self::getAllAuthorsForDropdownList();
+
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
         }
 
         return $this->render('create', [
             'model' => $model,
+            'allauthor' => $this->allauthor,
         ]);
     }
 
@@ -84,7 +90,15 @@ class BookController extends Controller
      */
     public function actionUpdate($id)
     {
+
         $model = $this->findModel($id);
+        //Текущий список авторов книги
+        foreach ($model->authors as $auth) {
+            $model->idAuthors[] = $auth->id;
+        }
+
+        //Массив все авторов для dropdownList
+        $this->allauthor = self::getAllAuthorsForDropdownList();
 
         if ($model->load(Yii::$app->request->post()) && $model->save()) {
             return $this->redirect(['view', 'id' => $model->id]);
@@ -92,6 +106,7 @@ class BookController extends Controller
 
         return $this->render('update', [
             'model' => $model,
+            'allauthor' => $this->allauthor,
         ]);
     }
 
@@ -123,5 +138,13 @@ class BookController extends Controller
         }
 
         throw new NotFoundHttpException('The requested page does not exist.');
+    }
+
+    static function getAllAuthorsForDropdownList() {
+        $aallauthor = array();
+        foreach (Authors::find()->select(['family', 'id'])->all() as $itemAuthor) {
+            $aallauthor[$itemAuthor->id] = $itemAuthor->family;
+        }
+        return $aallauthor;
     }
 }

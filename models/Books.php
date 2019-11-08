@@ -16,6 +16,7 @@ use Yii;
  */
 class Books extends \yii\db\ActiveRecord
 {
+    public $idAuthors = array();
     /**
      * {@inheritdoc}
      */
@@ -30,7 +31,7 @@ class Books extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['title'], 'required'],
+            [['title', 'idAuthors'], 'required'],
             [['content'], 'string'],
             [['title'], 'string', 'max' => 255],
         ];
@@ -43,17 +44,10 @@ class Books extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'title' => 'Title',
-            'content' => 'Content',
+            'title' => 'Название',
+            'idAuthors' => 'Авторы',
+            'content' => 'Описание',
         ];
-    }
-
-    /**
-     * @return \yii\db\ActiveQuery
-     */
-    public function getBookAuthors()
-    {
-        return $this->hasMany(BookAuthor::className(), ['book_id' => 'id']);
     }
 
     /**
@@ -63,4 +57,52 @@ class Books extends \yii\db\ActiveRecord
     {
         return $this->hasMany(Authors::className(), ['id' => 'author_id'])->viaTable('book_author', ['book_id' => 'id']);
     }
+
+
+    /**
+     * junction таблиц books и authors
+     */
+    protected function junctionBooksAuthors() {
+        //Новые авторы
+        $new_autrors = $this->idAuthors;
+
+        //Текущий список авторов книги
+        $current_author = array();
+        foreach ($this->authors as $auth) {
+            $current_author[] = $auth->id;
+        }
+        //Добавляем авторов
+        foreach ($new_autrors as $authorN) {
+            if (!in_array($authorN, $current_author)) {
+                if ($author = Authors::findOne($authorN)) {
+                    $this->link('authors', $author);
+                }
+            }
+        }
+        //Удаляем текущих
+        foreach ($current_author as $authorC) {
+            if (!in_array($authorC, $new_autrors)) {
+                if ($author = Authors::findOne($authorC)) {
+                    $this->unlink('authors', $author, true);
+                }
+            }
+        }
+    }
+
+
+    /**
+     * Переопределяем метод save для установки авторов книг
+     * @param bool $runValidation
+     * @param null $attributeNames
+     * @return bool
+     */
+    public function save($runValidation = true, $attributeNames = null) {
+
+        if (parent::save($runValidation, $attributeNames) !== false) {
+            //Устанавливаем авторов книги
+            $this->junctionBooksAuthors();
+            return true;
+        } else return false;
+    }
+
 }

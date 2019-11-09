@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Authors;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -60,7 +61,16 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $authors = Authors::find()->with('books')->limit(100)->all();
+        //Жадно загружаем книги для авторов
+/*
+        foreach ($books as $vbdf) {
+            JBdump($vbdf);
+        }
+*/
+        return $this->render('index', [
+            'authors' => $authors,
+        ]);
     }
 
     /**

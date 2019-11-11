@@ -3,6 +3,7 @@
 namespace app\models;
 
 use Yii;
+use yii\helpers\ArrayHelper;
 
 /**
  * This is the model class for table "books".
@@ -103,6 +104,24 @@ class Books extends \yii\db\ActiveRecord
             $this->junctionBooksAuthors();
             return true;
         } else return false;
+    }
+
+
+    /**
+     * Добавляем поле authors для api
+     * @return array|false
+     */
+    public function fields()
+    {
+        $fields = parent::fields();
+        $fields['author'] = function () {
+            $outField = array();
+            foreach ($this->authors as $itemA) {
+                $outField[] = $itemA->surname;
+            }
+            return join(', ', $outField);
+        };
+        return $fields;
     }
 
 }
